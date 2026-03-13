@@ -1,0 +1,8 @@
+# 快手币充值定时发送 - 每天北京中午12:00 (UTC 04:00) - 发送到频道 @bcsc77
+0 4 * * * /home/openclaw/.openclaw/workspace/scripts/send-kuaishou-promo.sh
+
+# 永劫无间手游元宝直充定时发送 - 每天北京中午12:05 (UTC 04:05) - 发送到频道 @bcsc77
+5 4 * * * /home/openclaw/.openclaw/workspace/scripts/send-naraka-promo.sh
+
+# 会员充值定时发送 - 每天北京中午12:10 (UTC 04:10) - 发送到频道 @bcsc77
+10 4 * * * /home/openclaw/.openclaw/workspace/scripts/send-vip-promo.sh
