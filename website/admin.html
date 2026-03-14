@@ -501,7 +501,7 @@
                 <label class="form-label">密码</label>
                 <input type="password" class="form-input" id="password" placeholder="请输入密码">
             </div>
-            <button class="btn-login" onclick="login()">登录</button>
+            <button class="btn-login" onclick="handleLogin()">登录</button>
         </div>
     </div>
 
@@ -527,7 +527,7 @@
                     ⚙️ 系统设置
                 </li>
             </ul>
-            <div class="sidebar-logout" onclick="logout()">
+            <div class="sidebar-logout" onclick="handleLogout()">
                 🚪 退出登录
             </div>
         </div>
@@ -786,7 +786,7 @@
         const SUPABASE_KEY = 'sb_publishable_e03LbnJ7Gs4flKRK8zqubA_KkT6CfZX';
 
         // 初始化 Supabase 客户端
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // 管理员密码（可修改）
         const ADMIN_PASSWORD = 'beicang888';
@@ -798,7 +798,7 @@
         let editingBanner = null;
 
         // 登录
-        async function login() {
+        function handleLogin() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
@@ -818,7 +818,7 @@
         }
 
         // 退出登录
-        function logout() {
+        function handleLogout() {
             if (confirm('确定要退出登录吗？')) {
                 document.getElementById('adminContainer').style.display = 'none';
                 document.getElementById('loginContainer').style.display = 'flex';
@@ -869,7 +869,7 @@
 
         // 加载商品列表
         async function loadProducts() {
-            const { data: products, error } = await supabase
+            const { data: products, error } = await supabaseClient
                 .from('products')
                 .select(`
                     *,
@@ -885,7 +885,7 @@
             // 加载每个商品的价格数量
             const productsWithPriceCount = await Promise.all(
                 products.map(async (product) => {
-                    const { count } = await supabase
+                    const { count } = await supabaseClient
                         .from('product_prices')
                         .select('*', { count: 'exact', head: true })
                         .eq('product_id', product.id);
@@ -941,7 +941,7 @@
             currentPrices = [];
 
             // 加载分类选项
-            const { data: categories } = await supabase
+            const { data: categories } = await supabaseClient
                 .from('categories')
                 .select('*')
                 .order('sort_order', { ascending: true });
@@ -953,7 +953,7 @@
 
             if (productId) {
                 // 编辑模式
-                const { data: product } = await supabase
+                const { data: product } = await supabaseClient
                     .from('products')
                     .select('*')
                     .eq('id', productId)
@@ -971,7 +971,7 @@
                     document.getElementById('productStatus').value = product.status;
 
                     // 加载价格列表
-                    const { data: prices } = await supabase
+                    const { data: prices } = await supabaseClient
                         .from('product_prices')
                         .select('*')
                         .eq('product_id', product.id)
@@ -1060,7 +1060,7 @@
             try {
                 if (productId) {
                     // 更新商品
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('products')
                         .update(productData)
                         .eq('id', productId);
@@ -1068,7 +1068,7 @@
                     if (error) throw error;
 
                     // 删除旧的价格
-                    await supabase
+                    await supabaseClient
                         .from('product_prices')
                         .delete()
                         .eq('product_id', productId);
@@ -1076,7 +1076,7 @@
                     // 添加新的价格
                     for (let i = 0; i < currentPrices.length; i++) {
                         if (currentPrices[i].name && currentPrices[i].value) {
-                            await supabase
+                            await supabaseClient
                                 .from('product_prices')
                                 .insert({
                                     product_id: productId,
@@ -1090,7 +1090,7 @@
                     showToast('商品更新成功', 'success');
                 } else {
                     // 添加新商品
-                    const { data: newProduct, error } = await supabase
+                    const { data: newProduct, error } = await supabaseClient
                         .from('products')
                         .insert([productData])
                         .select()
@@ -1101,7 +1101,7 @@
                     // 添加价格
                     for (let i = 0; i < currentPrices.length; i++) {
                         if (currentPrices[i].name && currentPrices[i].value) {
-                            await supabase
+                            await supabaseClient
                                 .from('product_prices')
                                 .insert({
                                     product_id: newProduct.id,
@@ -1129,7 +1129,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('products')
                     .delete()
                     .eq('id', productId);
@@ -1147,7 +1147,7 @@
 
         // 加载分类列表
         async function loadCategories() {
-            const { data: categories, error } = await supabase
+            const { data: categories, error } = await supabaseClient
                 .from('categories')
                 .select('*')
                 .order('sort_order', { ascending: true });
@@ -1199,7 +1199,7 @@
             editingCategory = null;
 
             if (categoryId) {
-                const { data: category } = await supabase
+                const { data: category } = await supabaseClient
                     .from('categories')
                     .select('*')
                     .eq('id', categoryId)
@@ -1254,7 +1254,7 @@
 
             try {
                 if (categoryId) {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('categories')
                         .update(categoryData)
                         .eq('id', categoryId);
@@ -1263,7 +1263,7 @@
 
                     showToast('分类更新成功', 'success');
                 } else {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('categories')
                         .insert([categoryData]);
 
@@ -1286,7 +1286,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('categories')
                     .delete()
                     .eq('id', categoryId);
@@ -1304,7 +1304,7 @@
 
         // 加载轮播图列表
         async function loadBanners() {
-            const { data: banners, error } = await supabase
+            const { data: banners, error } = await supabaseClient
                 .from('banners')
                 .select('*')
                 .order('sort_order', { ascending: true });
@@ -1361,7 +1361,7 @@
             editingBanner = null;
 
             if (bannerId) {
-                const { data: banner } = await supabase
+                const { data: banner } = await supabaseClient
                     .from('banners')
                     .select('*')
                     .eq('id', bannerId)
@@ -1419,7 +1419,7 @@
 
             try {
                 if (bannerId) {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('banners')
                         .update(bannerData)
                         .eq('id', bannerId);
@@ -1428,7 +1428,7 @@
 
                     showToast('轮播图更新成功', 'success');
                 } else {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('banners')
                         .insert([bannerData]);
 
@@ -1451,7 +1451,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('banners')
                     .delete()
                     .eq('id', bannerId);
@@ -1469,7 +1469,7 @@
 
         // 加载系统设置
         async function loadSettings() {
-            const { data: settings, error } = await supabase
+            const { data: settings, error } = await supabaseClient
                 .from('settings')
                 .select('*');
 
@@ -1512,7 +1512,7 @@
 
             try {
                 for (const setting of settingsData) {
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('settings')
                         .upsert(setting, { onConflict: 'key_name' });
 
