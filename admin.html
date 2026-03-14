@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北苍星际 - 管理后台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* 登录界面 */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: scale(1.05);
+        }
+
+        /* 管理后台主界面 */
+        .admin-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left: 4px solid white;
+        }
+
+        .sidebar-logout {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            margin-top: 20px;
+        }
+
+        .sidebar-logout:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* 主内容区 */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-add {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.05);
+        }
+
+        /* 数据表格 */
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #764ba2;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .modal-close {
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 价格列表 */
+        .price-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .price-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .price-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+
+        .btn-remove-price {
+            padding: 8px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-add-price {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 3000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .login-box {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h1 class="login-title">🏙️ 北苍星际管理后台</h1>
+            <div class="form-group">
+                <label class="form-label">用户名</label>
+                <input type="text" class="form-input" id="username" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label class="form-label">密码</label>
+                <input type="password" class="form-input" id="password" placeholder="请输入密码">
+            </div>
+            <button class="btn-login" onclick="login()">登录</button>
+        </div>
+    </div>
+
+    <!-- 管理后台主界面 -->
+    <div class="admin-container" id="adminContainer">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">北苍星际</h2>
+                <p class="sidebar-subtitle">管理后台</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" onclick="showPage('products')">
+                    📦 商品管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('categories')">
+                    📂 分类管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('banners')">
+                    🖼️ 轮播图管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('settings')">
+                    ⚙️ 系统设置
+                </li>
+            </ul>
+            <div class="sidebar-logout" onclick="logout()">
+                🚪 退出登录
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 商品管理页面 -->
+            <div id="productsPage">
+                <div class="content-header">
+                    <h1 class="page-title">商品管理</h1>
+                    <button class="btn-add" onclick="openProductModal()">+ 添加商品</button>
+                </div>
+                <div class="data-table">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>图片</th>
+                                <th>商品名称</th>
+                                <th>分类</th>
+                                <th>状态</th>
+                                <th>价格数量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- 商品数据将通过 JavaScript 加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 分类管理页面 -->
+            <div id="categoriesPage" style="display: none;">
+                <div class="content-header">
+                    <h1 class="page-title">分类管理</h1>
+                    <button class="btn-add" onclick="openCategoryModal()">+ 添加分类</button>
+                </div>
+                <div class="data-table">
+                    <table id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>图标</th>
+                                <th>分类名称</th>
+                                <th>标识符</th>
+                                <th>排序</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <!-- 分类数据将通过 JavaScript 加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 轮播图管理页面 -->
+            <div id="bannersPage" style="display: none;">
+                <div class="content-header">
+                    <h1 class="page-title">轮播图管理</h1>
+                    <button class="btn-add" onclick="openBannerModal()">+ 添加轮播图</button>
+                </div>
+                <div class="data-table">
+                    <table id="bannersTable">
+                        <thead>
+                            <tr>
+                                <th>图片</th>
+                                <th>标题</th>
+                                <th>链接</th>
+                                <th>排序</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannersTableBody">
+                            <!-- 轮播图数据将通过 JavaScript 加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 系统设置页面 -->
+            <div id="settingsPage" style="display: none;">
+                <div class="content-header">
+                    <h1 class="page-title">系统设置</h1>
+                    <button class="btn-add" onclick="saveSettings()">💾 保存设置</button>
+                </div>
+                <div style="background: white; padding: 30px; border-radius: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">网站名称</label>
+                        <input type="text" class="form-input" id="siteName" placeholder="请输入网站名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">网站口号</label>
+                        <input type="text" class="form-input" id="siteSlogan" placeholder="请输入网站口号">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Wavepay收款码</label>
+                        <input type="text" class="form-input" id="paymentQrCode" placeholder="请输入收款码图片URL">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telegram客服</label>
+                        <input type="text" class="form-input" id="contactTelegram" placeholder="请输入Telegram用户名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话</label>
+                        <input type="text" class="form-input" id="contactPhone" placeholder="请输入联系电话">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telegram群组</label>
+                        <input type="text" class="form-input" id="contactGroup" placeholder="请输入群组ID">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telegram频道</label>
+                        <input type="text" class="form-input" id="contactChannel" placeholder="请输入频道ID">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品编辑弹窗 -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="productModalTitle">添加商品</h2>
+                <span class="modal-close" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label class="form-label">商品名称 *</label>
+                    <input type="text" class="form-input" id="productName" placeholder="请输入商品名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">分类 *</label>
+                    <select class="form-input" id="productCategory">
+                        <!-- 分类选项将通过 JavaScript 加载 -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">子分类</label>
+                    <input type="text" class="form-input" id="productSubCategory" placeholder="如：kuaishou, douyin">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">商品图片URL *</label>
+                    <input type="text" class="form-input" id="productImage" placeholder="请输入图片URL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">商品描述</label>
+                    <textarea class="form-input" id="productDescription" rows="3" placeholder="请输入商品描述"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">状态</label>
+                    <select class="form-input" id="productStatus">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">价格列表</label>
+                    <div class="price-list" id="priceList">
+                        <!-- 价格项将通过 JavaScript 添加 -->
+                    </div>
+                    <button class="btn-add-price" onclick="addPriceItem()">+ 添加价格</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeProductModal()">取消</button>
+                <button class="btn-save" onclick="saveProduct()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分类编辑弹窗 -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryModalTitle">添加分类</h2>
+                <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="categoryId">
+                <div class="form-group">
+                    <label class="form-label">分类名称 *</label>
+                    <input type="text" class="form-input" id="categoryName" placeholder="请输入分类名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标识符 *</label>
+                    <input type="text" class="form-input" id="categorySlug" placeholder="如：live, game">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图标</label>
+                    <input type="text" class="form-input" id="categoryIcon" placeholder="如：📺, 🎮">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">排序</label>
+                    <input type="number" class="form-input" id="categorySort" placeholder="数字越小越靠前">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeCategoryModal()">取消</button>
+                <button class="btn-save" onclick="saveCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 轮播图编辑弹窗 -->
+    <div class="modal" id="bannerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="bannerModalTitle">添加轮播图</h2>
+                <span class="modal-close" onclick="closeBannerModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="bannerId">
+                <div class="form-group">
+                    <label class="form-label">标题</label>
+                    <input type="text" class="form-input" id="bannerTitle" placeholder="请输入标题">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图片URL *</label>
+                    <input type="text" class="form-input" id="bannerImage" placeholder="请输入图片URL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">链接URL</label>
+                    <input type="text" class="form-input" id="bannerLink" placeholder="请输入链接URL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">排序</label>
+                    <input type="number" class="form-input" id="bannerSort" placeholder="数字越小越靠前">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">状态</label>
+                    <select class="form-input" id="bannerStatus">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeBannerModal()">取消</button>
+                <button class="btn-save" onclick="saveBanner()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 引入 Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Supabase 配置
+        const SUPABASE_URL = 'https://ufxglsigclmqovqbfzad.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_e03LbnJ7Gs4flKRK8zqubA_KkT6CfZX';
+
+        // 初始化 Supabase 客户端
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 管理员密码（可修改）
+        const ADMIN_PASSWORD = 'beicang888';
+
+        // 全局变量
+        let currentPrices = [];
+        let editingProduct = null;
+        let editingCategory = null;
+        let editingBanner = null;
+
+        // 登录
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showToast('请输入用户名和密码', 'error');
+                return;
+            }
+
+            if (username === 'admin' && password === ADMIN_PASSWORD) {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                showToast('登录成功', 'success');
+                loadProducts();
+            } else {
+                showToast('用户名或密码错误', 'error');
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                document.getElementById('adminContainer').style.display = 'none';
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                showToast('已退出登录', 'success');
+            }
+        }
+
+        // 显示页面
+        function showPage(page) {
+            // 隐藏所有页面
+            document.getElementById('productsPage').style.display = 'none';
+            document.getElementById('categoriesPage').style.display = 'none';
+            document.getElementById('bannersPage').style.display = 'none';
+            document.getElementById('settingsPage').style.display = 'none';
+
+            // 移除所有侧边栏激活状态
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 显示选中的页面
+            document.getElementById(page + 'Page').style.display = 'block';
+
+            // 激活对应的侧边栏
+            event.target.classList.add('active');
+
+            // 加载数据
+            if (page === 'products') loadProducts();
+            if (page === 'categories') loadCategories();
+            if (page === 'banners') loadBanners();
+            if (page === 'settings') loadSettings();
+        }
+
+        // Toast 提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== 商品管理 ====================
+
+        // 加载商品列表
+        async function loadProducts() {
+            const { data: products, error } = await supabase
+                .from('products')
+                .select(`
+                    *,
+                    categories (name)
+                `)
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载商品失败：' + error.message, 'error');
+                return;
+            }
+
+            // 加载每个商品的价格数量
+            const productsWithPriceCount = await Promise.all(
+                products.map(async (product) => {
+                    const { count } = await supabase
+                        .from('product_prices')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('product_id', product.id);
+                    return { ...product, price_count: count || 0 };
+                })
+            );
+
+            renderProducts(productsWithPriceCount);
+        }
+
+        // 渲染商品列表
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTableBody');
+
+            if (!products || products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>暂无商品数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = products.map(product => `
+                <tr>
+                    <td><img src="${product.image_url}" alt="${product.name}" class="product-image"></td>
+                    <td>${product.name}</td>
+                    <td>${product.categories?.name || '-'}</td>
+                    <td>
+                        <span class="status-badge status-${product.status}">
+                            ${product.status === 'active' ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td>${product.price_count} 个</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editProduct('${product.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteProduct('${product.id}')">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 打开商品弹窗
+        async function openProductModal(productId = null) {
+            editingProduct = null;
+            currentPrices = [];
+
+            // 加载分类选项
+            const { data: categories } = await supabase
+                .from('categories')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.innerHTML = categories.map(cat =>
+                `<option value="${cat.slug}">${cat.name}</option>`
+            ).join('');
+
+            if (productId) {
+                // 编辑模式
+                const { data: product } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', productId)
+                    .single();
+
+                if (product) {
+                    editingProduct = product;
+                    document.getElementById('productModalTitle').textContent = '编辑商品';
+                    document.getElementById('productId').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productCategory').value = product.category_slug;
+                    document.getElementById('productSubCategory').value = product.sub_category || '';
+                    document.getElementById('productImage').value = product.image_url;
+                    document.getElementById('productDescription').value = product.description || '';
+                    document.getElementById('productStatus').value = product.status;
+
+                    // 加载价格列表
+                    const { data: prices } = await supabase
+                        .from('product_prices')
+                        .select('*')
+                        .eq('product_id', product.id)
+                        .order('sort_order', { ascending: true });
+
+                    currentPrices = prices || [];
+                    renderPriceList();
+                }
+            } else {
+                // 添加模式
+                document.getElementById('productModalTitle').textContent = '添加商品';
+                document.getElementById('productId').value = '';
+                document.getElementById('productName').value = '';
+                document.getElementById('productSubCategory').value = '';
+                document.getElementById('productImage').value = '';
+                document.getElementById('productDescription').value = '';
+                document.getElementById('productStatus').value = 'active';
+                currentPrices = [];
+                renderPriceList();
+            }
+
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        // 关闭商品弹窗
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            editingProduct = null;
+            currentPrices = [];
+        }
+
+        // 渲染价格列表
+        function renderPriceList() {
+            const priceList = document.getElementById('priceList');
+            priceList.innerHTML = currentPrices.map((price, index) => `
+                <div class="price-item">
+                    <input type="text" class="price-input" placeholder="规格名称"
+                           value="${price.name}" onchange="updatePrice(${index}, 'name', this.value)">
+                    <input type="text" class="price-input" placeholder="价格"
+                           value="${price.value}" onchange="updatePrice(${index}, 'value', this.value)">
+                    <button class="btn-remove-price" onclick="removePriceItem(${index})">删除</button>
+                </div>
+            `).join('');
+        }
+
+        // 添加价格项
+        function addPriceItem() {
+            currentPrices.push({ name: '', value: '' });
+            renderPriceList();
+        }
+
+        // 删除价格项
+        function removePriceItem(index) {
+            currentPrices.splice(index, 1);
+            renderPriceList();
+        }
+
+        // 更新价格项
+        function updatePrice(index, field, value) {
+            currentPrices[index][field] = value;
+        }
+
+        // 编辑商品
+        async function editProduct(productId) {
+            await openProductModal(productId);
+        }
+
+        // 保存商品
+        async function saveProduct() {
+            const productId = document.getElementById('productId').value;
+            const productData = {
+                name: document.getElementById('productName').value,
+                category_slug: document.getElementById('productCategory').value,
+                sub_category: document.getElementById('productSubCategory').value,
+                image_url: document.getElementById('productImage').value,
+                description: document.getElementById('productDescription').value,
+                status: document.getElementById('productStatus').value
+            };
+
+            // 验证必填字段
+            if (!productData.name || !productData.category_slug || !productData.image_url) {
+                showToast('请填写必填字段', 'error');
+                return;
+            }
+
+            try {
+                if (productId) {
+                    // 更新商品
+                    const { error } = await supabase
+                        .from('products')
+                        .update(productData)
+                        .eq('id', productId);
+
+                    if (error) throw error;
+
+                    // 删除旧的价格
+                    await supabase
+                        .from('product_prices')
+                        .delete()
+                        .eq('product_id', productId);
+
+                    // 添加新的价格
+                    for (let i = 0; i < currentPrices.length; i++) {
+                        if (currentPrices[i].name && currentPrices[i].value) {
+                            await supabase
+                                .from('product_prices')
+                                .insert({
+                                    product_id: productId,
+                                    name: currentPrices[i].name,
+                                    value: currentPrices[i].value,
+                                    sort_order: i
+                                });
+                        }
+                    }
+
+                    showToast('商品更新成功', 'success');
+                } else {
+                    // 添加新商品
+                    const { data: newProduct, error } = await supabase
+                        .from('products')
+                        .insert([productData])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    // 添加价格
+                    for (let i = 0; i < currentPrices.length; i++) {
+                        if (currentPrices[i].name && currentPrices[i].value) {
+                            await supabase
+                                .from('product_prices')
+                                .insert({
+                                    product_id: newProduct.id,
+                                    name: currentPrices[i].name,
+                                    value: currentPrices[i].value,
+                                    sort_order: i
+                                });
+                        }
+                    }
+
+                    showToast('商品添加成功', 'success');
+                }
+
+                closeProductModal();
+                loadProducts();
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
+        }
+
+        // 删除商品
+        async function deleteProduct(productId) {
+            if (!confirm('确定要删除这个商品吗？')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', productId);
+
+                if (error) throw error;
+
+                showToast('商品删除成功', 'success');
+                loadProducts();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 分类管理 ====================
+
+        // 加载分类列表
+        async function loadCategories() {
+            const { data: categories, error } = await supabase
+                .from('categories')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载分类失败：' + error.message, 'error');
+                return;
+            }
+
+            renderCategories(categories);
+        }
+
+        // 渲染分类列表
+        function renderCategories(categories) {
+            const tbody = document.getElementById('categoriesTableBody');
+
+            if (!categories || categories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📂</div>
+                                <p>暂无分类数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = categories.map(category => `
+                <tr>
+                    <td style="font-size: 24px;">${category.icon || '📦'}</td>
+                    <td>${category.name}</td>
+                    <td>${category.slug}</td>
+                    <td>${category.sort_order}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editCategory('${category.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteCategory('${category.id}')">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 打开分类弹窗
+        async function openCategoryModal(categoryId = null) {
+            editingCategory = null;
+
+            if (categoryId) {
+                const { data: category } = await supabase
+                    .from('categories')
+                    .select('*')
+                    .eq('id', categoryId)
+                    .single();
+
+                if (category) {
+                    editingCategory = category;
+                    document.getElementById('categoryModalTitle').textContent = '编辑分类';
+                    document.getElementById('categoryId').value = category.id;
+                    document.getElementById('categoryName').value = category.name;
+                    document.getElementById('categorySlug').value = category.slug;
+                    document.getElementById('categoryIcon').value = category.icon || '';
+                    document.getElementById('categorySort').value = category.sort_order;
+                }
+            } else {
+                document.getElementById('categoryModalTitle').textContent = '添加分类';
+                document.getElementById('categoryId').value = '';
+                document.getElementById('categoryName').value = '';
+                document.getElementById('categorySlug').value = '';
+                document.getElementById('categoryIcon').value = '';
+                document.getElementById('categorySort').value = '0';
+            }
+
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        // 关闭分类弹窗
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+            editingCategory = null;
+        }
+
+        // 编辑分类
+        async function editCategory(categoryId) {
+            await openCategoryModal(categoryId);
+        }
+
+        // 保存分类
+        async function saveCategory() {
+            const categoryId = document.getElementById('categoryId').value;
+            const categoryData = {
+                name: document.getElementById('categoryName').value,
+                slug: document.getElementById('categorySlug').value,
+                icon: document.getElementById('categoryIcon').value,
+                sort_order: parseInt(document.getElementById('categorySort').value) || 0
+            };
+
+            if (!categoryData.name || !categoryData.slug) {
+                showToast('请填写必填字段', 'error');
+                return;
+            }
+
+            try {
+                if (categoryId) {
+                    const { error } = await supabase
+                        .from('categories')
+                        .update(categoryData)
+                        .eq('id', categoryId);
+
+                    if (error) throw error;
+
+                    showToast('分类更新成功', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('categories')
+                        .insert([categoryData]);
+
+                    if (error) throw error;
+
+                    showToast('分类添加成功', 'success');
+                }
+
+                closeCategoryModal();
+                loadCategories();
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
+        }
+
+        // 删除分类
+        async function deleteCategory(categoryId) {
+            if (!confirm('确定要删除这个分类吗？')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('categories')
+                    .delete()
+                    .eq('id', categoryId);
+
+                if (error) throw error;
+
+                showToast('分类删除成功', 'success');
+                loadCategories();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 轮播图管理 ====================
+
+        // 加载轮播图列表
+        async function loadBanners() {
+            const { data: banners, error } = await supabase
+                .from('banners')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载轮播图失败：' + error.message, 'error');
+                return;
+            }
+
+            renderBanners(banners);
+        }
+
+        // 渲染轮播图列表
+        function renderBanners(banners) {
+            const tbody = document.getElementById('bannersTableBody');
+
+            if (!banners || banners.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🖼️</div>
+                                <p>暂无轮播图数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = banners.map(banner => `
+                <tr>
+                    <td><img src="${banner.image_url}" alt="${banner.title}" style="width: 150px; height: 80px; object-fit: cover; border-radius: 8px;"></td>
+                    <td>${banner.title || '-'}</td>
+                    <td>${banner.link_url || '-'}</td>
+                    <td>${banner.sort_order}</td>
+                    <td>
+                        <span class="status-badge status-${banner.status}">
+                            ${banner.status === 'active' ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editBanner('${banner.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteBanner('${banner.id}')">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 打开轮播图弹窗
+        async function openBannerModal(bannerId = null) {
+            editingBanner = null;
+
+            if (bannerId) {
+                const { data: banner } = await supabase
+                    .from('banners')
+                    .select('*')
+                    .eq('id', bannerId)
+                    .single();
+
+                if (banner) {
+                    editingBanner = banner;
+                    document.getElementById('bannerModalTitle').textContent = '编辑轮播图';
+                    document.getElementById('bannerId').value = banner.id;
+                    document.getElementById('bannerTitle').value = banner.title || '';
+                    document.getElementById('bannerImage').value = banner.image_url;
+                    document.getElementById('bannerLink').value = banner.link_url || '';
+                    document.getElementById('bannerSort').value = banner.sort_order;
+                    document.getElementById('bannerStatus').value = banner.status;
+                }
+            } else {
+                document.getElementById('bannerModalTitle').textContent = '添加轮播图';
+                document.getElementById('bannerId').value = '';
+                document.getElementById('bannerTitle').value = '';
+                document.getElementById('bannerImage').value = '';
+                document.getElementById('bannerLink').value = '';
+                document.getElementById('bannerSort').value = '0';
+                document.getElementById('bannerStatus').value = 'active';
+            }
+
+            document.getElementById('bannerModal').classList.add('active');
+        }
+
+        // 关闭轮播图弹窗
+        function closeBannerModal() {
+            document.getElementById('bannerModal').classList.remove('active');
+            editingBanner = null;
+        }
+
+        // 编辑轮播图
+        async function editBanner(bannerId) {
+            await openBannerModal(bannerId);
+        }
+
+        // 保存轮播图
+        async function saveBanner() {
+            const bannerId = document.getElementById('bannerId').value;
+            const bannerData = {
+                title: document.getElementById('bannerTitle').value,
+                image_url: document.getElementById('bannerImage').value,
+                link_url: document.getElementById('bannerLink').value,
+                sort_order: parseInt(document.getElementById('bannerSort').value) || 0,
+                status: document.getElementById('bannerStatus').value
+            };
+
+            if (!bannerData.image_url) {
+                showToast('请填写图片URL', 'error');
+                return;
+            }
+
+            try {
+                if (bannerId) {
+                    const { error } = await supabase
+                        .from('banners')
+                        .update(bannerData)
+                        .eq('id', bannerId);
+
+                    if (error) throw error;
+
+                    showToast('轮播图更新成功', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('banners')
+                        .insert([bannerData]);
+
+                    if (error) throw error;
+
+                    showToast('轮播图添加成功', 'success');
+                }
+
+                closeBannerModal();
+                loadBanners();
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
+        }
+
+        // 删除轮播图
+        async function deleteBanner(bannerId) {
+            if (!confirm('确定要删除这个轮播图吗？')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('banners')
+                    .delete()
+                    .eq('id', bannerId);
+
+                if (error) throw error;
+
+                showToast('轮播图删除成功', 'success');
+                loadBanners();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 系统设置 ====================
+
+        // 加载系统设置
+        async function loadSettings() {
+            const { data: settings, error } = await supabase
+                .from('settings')
+                .select('*');
+
+            if (error) {
+                showToast('加载设置失败：' + error.message, 'error');
+                return;
+            }
+
+            // 填充表单
+            settings.forEach(setting => {
+                if (setting.key_name === 'site_name') {
+                    document.getElementById('siteName').value = setting.value || '';
+                } else if (setting.key_name === 'site_slogan') {
+                    document.getElementById('siteSlogan').value = setting.value || '';
+                } else if (setting.key_name === 'payment_qr_code') {
+                    document.getElementById('paymentQrCode').value = setting.value || '';
+                } else if (setting.key_name === 'contact_telegram') {
+                    document.getElementById('contactTelegram').value = setting.value || '';
+                } else if (setting.key_name === 'contact_phone') {
+                    document.getElementById('contactPhone').value = setting.value || '';
+                } else if (setting.key_name === 'contact_group') {
+                    document.getElementById('contactGroup').value = setting.value || '';
+                } else if (setting.key_name === 'contact_channel') {
+                    document.getElementById('contactChannel').value = setting.value || '';
+                }
+            });
+        }
+
+        // 保存系统设置
+        async function saveSettings() {
+            const settingsData = [
+                { key_name: 'site_name', value: document.getElementById('siteName').value },
+                { key_name: 'site_slogan', value: document.getElementById('siteSlogan').value },
+                { key_name: 'payment_qr_code', value: document.getElementById('paymentQrCode').value },
+                { key_name: 'contact_telegram', value: document.getElementById('contactTelegram').value },
+                { key_name: 'contact_phone', value: document.getElementById('contactPhone').value },
+                { key_name: 'contact_group', value: document.getElementById('contactGroup').value },
+                { key_name: 'contact_channel', value: document.getElementById('contactChannel').value }
+            ];
+
+            try {
+                for (const setting of settingsData) {
+                    const { error } = await supabase
+                        .from('settings')
+                        .upsert(setting, { onConflict: 'key_name' });
+
+                    if (error) throw error;
+                }
+
+                showToast('设置保存成功', 'success');
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
+        }
+
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
