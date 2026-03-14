@@ -79,6 +79,7 @@
     </style>
 </head>
 <body>
+    <!-- 登录界面 -->
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <h1 class="login-title">🏙️ 北苍星际管理后台</h1>
@@ -90,10 +91,12 @@
                 <label class="form-label">密码</label>
                 <input type="password" class="form-input" id="password" placeholder="请输入密码">
             </div>
-            <button class="btn-login" id="loginBtn">登录</button>
+            <!-- 修复：使用 onclick="login()" 调用全局函数 -->
+            <button class="btn-login" onclick="login()">登录</button>
         </div>
     </div>
 
+    <!-- 管理后台主界面 -->
     <div class="admin-container" id="adminContainer">
         <div class="sidebar">
             <div class="sidebar-header">
@@ -101,19 +104,30 @@
                 <p class="sidebar-subtitle">管理后台</p>
             </div>
             <ul class="sidebar-menu">
-                <li class="sidebar-item active" data-page="products">📦 商品管理</li>
-                <li class="sidebar-item" data-page="categories">📂 分类管理</li>
-                <li class="sidebar-item" data-page="banners">🖼️ 轮播图管理</li>
-                <li class="sidebar-item" data-page="settings">⚙️ 系统设置</li>
+                <li class="sidebar-item active" onclick="showPage('products')">
+                    📦 商品管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('categories')">
+                    📂 分类管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('banners')">
+                    🖼️ 轮播图管理
+                </li>
+                <li class="sidebar-item" onclick="showPage('settings')">
+                    ⚙️ 系统设置
+                </li>
             </ul>
-            <div class="sidebar-logout" id="logoutBtn">🚪 退出登录</div>
+            <div class="sidebar-logout" onclick="logout()">
+                🚪 退出登录
+            </div>
         </div>
 
         <div class="main-content">
+            <!-- 商品管理页面 -->
             <div id="productsPage">
                 <div class="content-header">
                     <h1 class="page-title">商品管理</h1>
-                    <button class="btn-add" id="addProductBtn">+ 添加商品</button>
+                    <button class="btn-add" onclick="openProductModal()">+ 添加商品</button>
                 </div>
                 <div class="data-table">
                     <table id="productsTable">
@@ -127,15 +141,18 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody id="productsTableBody"></tbody>
+                        <tbody id="productsTableBody">
+                            <!-- 商品数据将通过 JavaScript 加载 -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- 分类管理页面 -->
             <div id="categoriesPage" style="display: none;">
                 <div class="content-header">
                     <h1 class="page-title">分类管理</h1>
-                    <button class="btn-add" id="addCategoryBtn">+ 添加分类</button>
+                    <button class="btn-add" onclick="openCategoryModal()">+ 添加分类</button>
                 </div>
                 <div class="data-table">
                     <table id="categoriesTable">
@@ -148,15 +165,18 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody id="categoriesTableBody"></tbody>
+                        <tbody id="categoriesTableBody">
+                            <!-- 分类数据将通过 JavaScript 加载 -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- 轮播图管理页面 -->
             <div id="bannersPage" style="display: none;">
                 <div class="content-header">
                     <h1 class="page-title">轮播图管理</h1>
-                    <button class="btn-add" id="addBannerBtn">+ 添加轮播图</button>
+                    <button class="btn-add" onclick="openBannerModal()">+ 添加轮播图</button>
                 </div>
                 <div class="data-table">
                     <table id="bannersTable">
@@ -170,15 +190,18 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody id="bannersTableBody"></tbody>
+                        <tbody id="bannersTableBody">
+                            <!-- 轮播图数据将通过 JavaScript 加载 -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- 系统设置页面 -->
             <div id="settingsPage" style="display: none;">
                 <div class="content-header">
                     <h1 class="page-title">系统设置</h1>
-                    <button class="btn-add" id="saveSettingsBtn">💾 保存设置</button>
+                    <button class="btn-add" onclick="saveSettings()">💾 保存设置</button>
                 </div>
                 <div style="background: white; padding: 30px; border-radius: 15px;">
                     <div class="form-group">
@@ -214,11 +237,12 @@
         </div>
     </div>
 
+    <!-- 商品编辑弹窗 -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="productModalTitle">添加商品</h2>
-                <span class="modal-close" id="closeProductModal">&times;</span>
+                <span class="modal-close" onclick="closeProductModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="productId">
@@ -228,7 +252,9 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">分类 *</label>
-                    <select class="form-input" id="productCategory"></select>
+                    <select class="form-input" id="productCategory">
+                        <!-- 分类选项将通过 JavaScript 加载 -->
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">子分类</label>
@@ -251,22 +277,25 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">价格列表</label>
-                    <div class="price-list" id="priceList"></div>
-                    <button class="btn-add-price" id="addPriceBtn">+ 添加价格</button>
+                    <div class="price-list" id="priceList">
+                        <!-- 价格项将通过 JavaScript 添加 -->
+                    </div>
+                    <button class="btn-add-price" onclick="addPriceItem()">+ 添加价格</button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" id="cancelProductBtn">取消</button>
-                <button class="btn-save" id="saveProductBtn">保存</button>
+                <button class="btn-cancel" onclick="closeProductModal()">取消</button>
+                <button class="btn-save" onclick="saveProduct()">保存</button>
             </div>
         </div>
     </div>
 
+    <!-- 分类编辑弹窗 -->
     <div class="modal" id="categoryModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="categoryModalTitle">添加分类</h2>
-                <span class="modal-close" id="closeCategoryModal">&times;</span>
+                <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="categoryId">
@@ -288,17 +317,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" id="cancelCategoryBtn">取消</button>
-                <button class="btn-save" id="saveCategoryBtn">保存</button>
+                <button class="btn-cancel" onclick="closeCategoryModal()">取消</button>
+                <button class="btn-save" onclick="saveCategory()">保存</button>
             </div>
         </div>
     </div>
 
+    <!-- 轮播图编辑弹窗 -->
     <div class="modal" id="bannerModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="bannerModalTitle">添加轮播图</h2>
-                <span class="modal-close" id="closeBannerModal">&times;</span>
+                <span class="modal-close" onclick="closeBannerModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="bannerId">
@@ -327,35 +357,51 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" id="cancelBannerBtn">取消</button>
-                <button class="btn-save" id="saveBannerBtn">保存</button>
+                <button class="btn-cancel" onclick="closeBannerModal()">取消</button>
+                <button class="btn-save" onclick="saveBanner()">保存</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast 提示 -->
     <div class="toast" id="toast"></div>
 
+    <!-- 引入 Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-    (function() {
-        const DB = window.supabase.createClient('https://ufxglsigclmqovqbfzad.supabase.co', 'sb_publishable_e03LbnJ7Gs4flKRK8zqubA_KkT6CfZX');
-        const ADMIN_PASS = 'beicang888';
+        // =======================================================
+        // 第一步：只声明一次 supabase（避免重复声明）✅
+        // =======================================================
+        const supabaseUrl = "https://ufxglsigclmqovqbfzad.supabase.co";
+        const supabaseKey = "sb_publishable_e03LbnJ7Gs4flKRK8zqubA_KkT6CfZX";
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // =======================================================
+        // 第二步：定义全局变量和函数
+        // =======================================================
+        const ADMIN_PASSWORD = 'beicang888';
         let currentPrices = [];
         let editingProduct = null;
         let editingCategory = null;
         let editingBanner = null;
 
-        function showToast(msg, type) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.className = 'toast show ' + type;
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
+        // =======================================================
+        // 第三步：定义全局的 login 函数 ✅
+        // =======================================================
+        function login() {
+            // 获取输入框的值
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            if (u === 'admin' && p === ADMIN_PASS) {
+            // 校验输入
+            if (!username || !password) {
+                showToast('请输入用户名和密码', 'error');
+                return;
+            }
+
+            // 简单密码验证（不使用 Supabase Auth）
+            if (username === 'admin' && password === ADMIN_PASSWORD) {
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('adminContainer').style.display = 'block';
                 showToast('登录成功', 'success');
@@ -363,9 +409,14 @@
             } else {
                 showToast('用户名或密码错误', 'error');
             }
-        });
+        }
 
-        document.getElementById('logoutBtn').addEventListener('click', function() {
+        // =======================================================
+        // 其他全局函数
+        // =======================================================
+
+        // 退出登录
+        function logout() {
             if (confirm('确定要退出登录吗？')) {
                 document.getElementById('adminContainer').style.display = 'none';
                 document.getElementById('loginContainer').style.display = 'flex';
@@ -373,77 +424,162 @@
                 document.getElementById('password').value = '';
                 showToast('已退出登录', 'success');
             }
-        });
-
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                const page = this.getAttribute('data-page');
-                document.querySelectorAll('.main-content > div').forEach(d => d.style.display = 'none');
-                document.getElementById(page + 'Page').style.display = 'block';
-                if (page === 'products') loadProducts();
-                if (page === 'categories') loadCategories();
-                if (page === 'banners') loadBanners();
-                if (page === 'settings') loadSettings();
-            });
-        });
-
-        function loadProducts() {
-            DB.from('products').select('*,categories(name)').order('sort_order').then(({data,error}) => {
-                if (error) return showToast('加载失败: '+error.message,'error');
-                Promise.all(data.map(p => DB.from('product_prices').select('*',{count:'exact',head:true}).eq('product_id',p.id).then(({count}) => ({...p,price_count:count||0}))))
-                .then(products => renderProducts(products));
-            });
         }
 
-        function renderProducts(products) {
-            const tbody = document.getElementById('productsTableBody');
-            if (!products.length) {
-                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📦</div><p>暂无商品</p></div></td></tr>';
+        // 显示页面
+        function showPage(page) {
+            // 隐藏所有页面
+            document.getElementById('productsPage').style.display = 'none';
+            document.getElementById('categoriesPage').style.display = 'none';
+            document.getElementById('bannersPage').style.display = 'none';
+            document.getElementById('settingsPage').style.display = 'none';
+
+            // 移除所有侧边栏激活状态
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 显示选中的页面
+            document.getElementById(page + 'Page').style.display = 'block';
+
+            // 激活对应的侧边栏
+            event.target.classList.add('active');
+
+            // 加载数据
+            if (page === 'products') loadProducts();
+            if (page === 'categories') loadCategories();
+            if (page === 'banners') loadBanners();
+            if (page === 'settings') loadSettings();
+        }
+
+        // Toast 提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== 商品管理 ====================
+
+        // 加载商品列表
+        async function loadProducts() {
+            const { data: products, error } = await supabase
+                .from('products')
+                .select(`
+                    *,
+                    categories (name)
+                `)
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载商品失败：' + error.message, 'error');
                 return;
             }
-            tbody.innerHTML = products.map(p => `
+
+            // 加载每个商品的价格数量
+            const productsWithPriceCount = await Promise.all(
+                products.map(async (product) => {
+                    const { count } = await supabase
+                        .from('product_prices')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('product_id', product.id);
+                    return { ...product, price_count: count || 0 };
+                })
+            );
+
+            renderProducts(productsWithPriceCount);
+        }
+
+        // 渲染商品列表
+        function renderProducts(products) {
+            const tbody = document.getElementById('productsTableBody');
+
+            if (!products || products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>暂无商品数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = products.map(product => `
                 <tr>
-                    <td><img src="${p.image_url}" class="product-image"></td>
-                    <td>${p.name}</td>
-                    <td>${p.categories?.name||'-'}</td>
-                    <td><span class="status-badge status-${p.status}">${p.status==='active'?'启用':'禁用'}</span></td>
-                    <td>${p.price_count}个</td>
+                    <td><img src="${product.image_url}" alt="${product.name}" class="product-image"></td>
+                    <td>${product.name}</td>
+                    <td>${product.categories?.name || '-'}</td>
+                    <td>
+                        <span class="status-badge status-${product.status}">
+                            ${product.status === 'active' ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td>${product.price_count} 个</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-action btn-edit" data-id="${p.id}" data-action="editProduct">编辑</button>
-                            <button class="btn-action btn-delete" data-id="${p.id}" data-action="deleteProduct">删除</button>
+                            <button class="btn-action btn-edit" onclick="editProduct('${product.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteProduct('${product.id}')">删除</button>
                         </div>
                     </td>
                 </tr>
             `).join('');
-            attachTableEvents();
         }
 
-        async function openProductModal(id = null) {
+        // 打开商品弹窗
+        async function openProductModal(productId = null) {
             editingProduct = null;
             currentPrices = [];
-            const {data:cats} = await DB.from('categories').select('*').order('sort_order');
-            document.getElementById('productCategory').innerHTML = cats.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
-            
-            if (id) {
-                const {data:p} = await DB.from('products').select('*').eq('id',id).single();
-                if (p) {
-                    editingProduct = p;
+
+            // 加载分类选项
+            const { data: categories } = await supabase
+                .from('categories')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.innerHTML = categories.map(cat =>
+                `<option value="${cat.slug}">${cat.name}</option>`
+            ).join('');
+
+            if (productId) {
+                // 编辑模式
+                const { data: product } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', productId)
+                    .single();
+
+                if (product) {
+                    editingProduct = product;
                     document.getElementById('productModalTitle').textContent = '编辑商品';
-                    document.getElementById('productId').value = p.id;
-                    document.getElementById('productName').value = p.name;
-                    document.getElementById('productCategory').value = p.category_slug;
-                    document.getElementById('productSubCategory').value = p.sub_category||'';
-                    document.getElementById('productImage').value = p.image_url;
-                    document.getElementById('productDescription').value = p.description||'';
-                    document.getElementById('productStatus').value = p.status;
-                    const {data:prices} = await DB.from('product_prices').select('*').eq('product_id',id).order('sort_order');
-                    currentPrices = prices||[];
-                    renderPrices();
+                    document.getElementById('productId').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productCategory').value = product.category_slug;
+                    document.getElementById('productSubCategory').value = product.sub_category || '';
+                    document.getElementById('productImage').value = product.image_url;
+                    document.getElementById('productDescription').value = product.description || '';
+                    document.getElementById('productStatus').value = product.status;
+
+                    // 加载价格列表
+                    const { data: prices } = await supabase
+                        .from('product_prices')
+                        .select('*')
+                        .eq('product_id', product.id)
+                        .order('sort_order', { ascending: true });
+
+                    currentPrices = prices || [];
+                    renderPriceList();
                 }
             } else {
+                // 添加模式
                 document.getElementById('productModalTitle').textContent = '添加商品';
                 document.getElementById('productId').value = '';
                 document.getElementById('productName').value = '';
@@ -452,42 +588,59 @@
                 document.getElementById('productDescription').value = '';
                 document.getElementById('productStatus').value = 'active';
                 currentPrices = [];
-                renderPrices();
+                renderPriceList();
             }
+
             document.getElementById('productModal').classList.add('active');
         }
 
-        function renderPrices() {
-            document.getElementById('priceList').innerHTML = currentPrices.map((pr,idx) => `
+        // 关闭商品弹窗
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            editingProduct = null;
+            currentPrices = [];
+        }
+
+        // 渲染价格列表
+        function renderPriceList() {
+            const priceList = document.getElementById('priceList');
+            priceList.innerHTML = currentPrices.map((price, index) => `
                 <div class="price-item">
-                    <input class="price-input" placeholder="规格" value="${pr.name}" onchange="currentPrices[${idx}].name=this.value">
-                    <input class="price-input" placeholder="价格" value="${pr.value}" onchange="currentPrices[${idx}].value=this.value">
-                    <button class="btn-remove-price" onclick="removePrice(${idx})">删除</button>
+                    <input type="text" class="price-input" placeholder="规格名称"
+                           value="${price.name}" onchange="updatePrice(${index}, 'name', this.value)">
+                    <input type="text" class="price-input" placeholder="价格"
+                           value="${price.value}" onchange="updatePrice(${index}, 'value', this.value)">
+                    <button class="btn-remove-price" onclick="removePriceItem(${index})">删除</button>
                 </div>
             `).join('');
         }
 
-        window.removePrice = function(idx) {
-            currentPrices.splice(idx,1);
-            renderPrices();
-        };
+        // 添加价格项
+        function addPriceItem() {
+            currentPrices.push({ name: '', value: '' });
+            renderPriceList();
+        }
 
-        document.getElementById('addPriceBtn').addEventListener('click', function() {
-            currentPrices.push({name:'',value:''});
-            renderPrices();
-        });
+        // 删除价格项
+        function removePriceItem(index) {
+            currentPrices.splice(index, 1);
+            renderPriceList();
+        }
 
-        document.getElementById('closeProductModal').addEventListener('click', function() {
-            document.getElementById('productModal').classList.remove('active');
-        });
+        // 更新价格项
+        function updatePrice(index, field, value) {
+            currentPrices[index][field] = value;
+        }
 
-        document.getElementById('cancelProductBtn').addEventListener('click', function() {
-            document.getElementById('productModal').classList.remove('active');
-        });
+        // 编辑商品
+        async function editProduct(productId) {
+            await openProductModal(productId);
+        }
 
-        document.getElementById('saveProductBtn').addEventListener('click', async function() {
-            const id = document.getElementById('productId').value;
-            const data = {
+        // 保存商品
+        async function saveProduct() {
+            const productId = document.getElementById('productId').value;
+            const productData = {
                 name: document.getElementById('productName').value,
                 category_slug: document.getElementById('productCategory').value,
                 sub_category: document.getElementById('productSubCategory').value,
@@ -495,84 +648,169 @@
                 description: document.getElementById('productDescription').value,
                 status: document.getElementById('productStatus').value
             };
-            if (!data.name || !data.category_slug || !data.image_url) return showToast('请填写必填字段','error');
-            try {
-                if (id) {
-                    await DB.from('products').update(data).eq('id',id);
-                    await DB.from('product_prices').delete().eq('product_id',id);
-                    for (let i=0; i<currentPrices.length; i++) {
-                        if (currentPrices[i].name && currentPrices[i].value) {
-                            await DB.from('product_prices').insert({product_id:id,name:currentPrices[i].name,value:currentPrices[i].value,sort_order:i});
-                        }
-                    }
-                    showToast('更新成功','success');
-                } else {
-                    const {data:newP} = await DB.from('products').insert([data]).select().single();
-                    for (let i=0; i<currentPrices.length; i++) {
-                        if (currentPrices[i].name && currentPrices[i].value) {
-                            await DB.from('product_prices').insert({product_id:newP.id,name:currentPrices[i].name,value:currentPrices[i].value,sort_order:i});
-                        }
-                    }
-                    showToast('添加成功','success');
-                }
-                document.getElementById('productModal').classList.remove('active');
-                loadProducts();
-            } catch(e) {
-                showToast('保存失败: '+e.message,'error');
+
+            // 验证必填字段
+            if (!productData.name || !productData.category_slug || !productData.image_url) {
+                showToast('请填写必填字段', 'error');
+                return;
             }
-        });
 
-        document.getElementById('addProductBtn').addEventListener('click', () => openProductModal());
+            try {
+                if (productId) {
+                    // 更新商品
+                    const { error } = await supabase
+                        .from('products')
+                        .update(productData)
+                        .eq('id', productId);
 
-        function attachTableEvents() {
-            document.querySelectorAll('[data-action="editProduct"]').forEach(btn => {
-                btn.addEventListener('click', () => openProductModal(btn.getAttribute('data-id')));
-            });
-            document.querySelectorAll('[data-action="deleteProduct"]').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    if (confirm('确定删除？')) {
-                        await DB.from('products').delete().eq('id',this.getAttribute('data-id'));
-                        showToast('删除成功','success');
-                        loadProducts();
+                    if (error) throw error;
+
+                    // 删除旧的价格
+                    await supabase
+                        .from('product_prices')
+                        .delete()
+                        .eq('product_id', productId);
+
+                    // 添加新的价格
+                    for (let i = 0; i < currentPrices.length; i++) {
+                        if (currentPrices[i].name && currentPrices[i].value) {
+                            await supabase
+                                .from('product_prices')
+                                .insert({
+                                    product_id: productId,
+                                    name: currentPrices[i].name,
+                                    value: currentPrices[i].value,
+                                    sort_order: i
+                                });
+                        }
                     }
-                });
-            });
+
+                    showToast('商品更新成功', 'success');
+                } else {
+                    // 添加新商品
+                    const { data: newProduct, error } = await supabase
+                        .from('products')
+                        .insert([productData])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    // 添加价格
+                    for (let i = 0; i < currentPrices.length; i++) {
+                        if (currentPrices[i].name && currentPrices[i].value) {
+                            await supabase
+                                .from('product_prices')
+                                .insert({
+                                    product_id: newProduct.id,
+                                    name: currentPrices[i].name,
+                                    value: currentPrices[i].value,
+                                    sort_order: i
+                                });
+                        }
+                    }
+
+                    showToast('商品添加成功', 'success');
+                }
+
+                closeProductModal();
+                loadProducts();
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
         }
 
-        // 分类
-        function loadCategories() {
-            DB.from('categories').select('*').order('sort_order').then(({data,error}) => {
-                if (error) return showToast('加载失败: '+error.message,'error');
-                document.getElementById('categoriesTableBody').innerHTML = data.length ? data.map(c => `
+        // 删除商品
+        async function deleteProduct(productId) {
+            if (!confirm('确定要删除这个商品吗？')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', productId);
+
+                if (error) throw error;
+
+                showToast('商品删除成功', 'success');
+                loadProducts();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 分类管理 ====================
+
+        // 加载分类列表
+        async function loadCategories() {
+            const { data: categories, error } = await supabase
+                .from('categories')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载分类失败：' + error.message, 'error');
+                return;
+            }
+
+            renderCategories(categories);
+        }
+
+        // 渲染分类列表
+        function renderCategories(categories) {
+            const tbody = document.getElementById('categoriesTableBody');
+
+            if (!categories || categories.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <td style="font-size:24px;">${c.icon||'📦'}</td>
-                        <td>${c.name}</td>
-                        <td>${c.slug}</td>
-                        <td>${c.sort_order}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" data-id="${c.id}" data-action="editCategory">编辑</button>
-                                <button class="btn-action btn-delete" data-id="${c.id}" data-action="deleteCategory">删除</button>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📂</div>
+                                <p>暂无分类数据</p>
                             </div>
                         </td>
                     </tr>
-                `).join('') : '<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">📂</div><p>暂无分类</p></div></td></tr>';
-                attachCategoryEvents();
-            });
+                `;
+                return;
+            }
+
+            tbody.innerHTML = categories.map(category => `
+                <tr>
+                    <td style="font-size: 24px;">${category.icon || '📦'}</td>
+                    <td>${category.name}</td>
+                    <td>${category.slug}</td>
+                    <td>${category.sort_order}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editCategory('${category.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteCategory('${category.id}')">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function openCategoryModal(id = null) {
+        // 打开分类弹窗
+        async function openCategoryModal(categoryId = null) {
             editingCategory = null;
-            if (id) {
-                const {data:c} = await DB.from('categories').select('*').eq('id',id).single();
-                if (c) {
-                    editingCategory = c;
+
+            if (categoryId) {
+                const { data: category } = await supabase
+                    .from('categories')
+                    .select('*')
+                    .eq('id', categoryId)
+                    .single();
+
+                if (category) {
+                    editingCategory = category;
                     document.getElementById('categoryModalTitle').textContent = '编辑分类';
-                    document.getElementById('categoryId').value = c.id;
-                    document.getElementById('categoryName').value = c.name;
-                    document.getElementById('categorySlug').value = c.slug;
-                    document.getElementById('categoryIcon').value = c.icon||'';
-                    document.getElementById('categorySort').value = c.sort_order;
+                    document.getElementById('categoryId').value = category.id;
+                    document.getElementById('categoryName').value = category.name;
+                    document.getElementById('categorySlug').value = category.slug;
+                    document.getElementById('categoryIcon').value = category.icon || '';
+                    document.getElementById('categorySort').value = category.sort_order;
                 }
             } else {
                 document.getElementById('categoryModalTitle').textContent = '添加分类';
@@ -582,87 +820,160 @@
                 document.getElementById('categoryIcon').value = '';
                 document.getElementById('categorySort').value = '0';
             }
+
             document.getElementById('categoryModal').classList.add('active');
         }
 
-        document.getElementById('addCategoryBtn').addEventListener('click', () => openCategoryModal());
-        document.getElementById('closeCategoryModal').addEventListener('click', () => document.getElementById('categoryModal').classList.remove('active'));
-        document.getElementById('cancelCategoryBtn').addEventListener('click', () => document.getElementById('categoryModal').classList.remove('active'));
-        document.getElementById('saveCategoryBtn').addEventListener('click', async function() {
-            const id = document.getElementById('categoryId').value;
-            const data = {
+        // 关闭分类弹窗
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+            editingCategory = null;
+        }
+
+        // 编辑分类
+        async function editCategory(categoryId) {
+            await openCategoryModal(categoryId);
+        }
+
+        // 保存分类
+        async function saveCategory() {
+            const categoryId = document.getElementById('categoryId').value;
+            const categoryData = {
                 name: document.getElementById('categoryName').value,
                 slug: document.getElementById('categorySlug').value,
                 icon: document.getElementById('categoryIcon').value,
-                sort_order: parseInt(document.getElementById('categorySort').value)||0
+                sort_order: parseInt(document.getElementById('categorySort').value) || 0
             };
-            if (!data.name || !data.slug) return showToast('请填写必填字段','error');
-            try {
-                if (id) {
-                    await DB.from('categories').update(data).eq('id',id);
-                    showToast('更新成功','success');
-                } else {
-                    await DB.from('categories').insert([data]);
-                    showToast('添加成功','success');
-                }
-                document.getElementById('categoryModal').classList.remove('active');
-                loadCategories();
-            } catch(e) {
-                showToast('保存失败: '+e.message,'error');
-            }
-        });
 
-        function attachCategoryEvents() {
-            document.querySelectorAll('[data-action="editCategory"]').forEach(btn => {
-                btn.addEventListener('click', () => openCategoryModal(btn.getAttribute('data-id')));
-            });
-            document.querySelectorAll('[data-action="deleteCategory"]').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    if (confirm('确定删除？')) {
-                        await DB.from('categories').delete().eq('id',this.getAttribute('data-id'));
-                        showToast('删除成功','success');
-                        loadCategories();
-                    }
-                });
-            });
+            if (!categoryData.name || !categoryData.slug) {
+                showToast('请填写必填字段', 'error');
+                return;
+            }
+
+            try {
+                if (categoryId) {
+                    const { error } = await supabase
+                        .from('categories')
+                        .update(categoryData)
+                        .eq('id', categoryId);
+
+                    if (error) throw error;
+
+                    showToast('分类更新成功', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('categories')
+                        .insert([categoryData]);
+
+                    if (error) throw error;
+
+                    showToast('分类添加成功', 'success');
+                }
+
+                closeCategoryModal();
+                loadCategories();
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
         }
 
-        // 轮播图
-        function loadBanners() {
-            DB.from('banners').select('*').order('sort_order').then(({data,error}) => {
-                if (error) return showToast('加载失败: '+error.message,'error');
-                document.getElementById('bannersTableBody').innerHTML = data.length ? data.map(b => `
+        // 删除分类
+        async function deleteCategory(categoryId) {
+            if (!confirm('确定要删除这个分类吗？')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('categories')
+                    .delete()
+                    .eq('id', categoryId);
+
+                if (error) throw error;
+
+                showToast('分类删除成功', 'success');
+                loadCategories();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 轮播图管理 ====================
+
+        // 加载轮播图列表
+        async function loadBanners() {
+            const { data: banners, error } = await supabase
+                .from('banners')
+                .select('*')
+                .order('sort_order', { ascending: true });
+
+            if (error) {
+                showToast('加载轮播图失败：' + error.message, 'error');
+                return;
+            }
+
+            renderBanners(banners);
+        }
+
+        // 渲染轮播图列表
+        function renderBanners(banners) {
+            const tbody = document.getElementById('bannersTableBody');
+
+            if (!banners || banners.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <td><img src="${b.image_url}" style="width:150px;height:80px;object-fit:cover;border-radius:8px;"></td>
-                        <td>${b.title||'-'}</td>
-                        <td>${b.link_url||'-'}</td>
-                        <td>${b.sort_order}</td>
-                        <td><span class="status-badge status-${b.status}">${b.status==='active'?'启用':'禁用'}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" data-id="${b.id}" data-action="editBanner">编辑</button>
-                                <button class="btn-action btn-delete" data-id="${b.id}" data-action="deleteBanner">删除</button>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🖼️</div>
+                                <p>暂无轮播图数据</p>
                             </div>
                         </td>
                     </tr>
-                `).join('') : '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🖼️</div><p>暂无轮播图</p></div></td></tr>';
-                attachBannerEvents();
-            });
+                `;
+                return;
+            }
+
+            tbody.innerHTML = banners.map(banner => `
+                <tr>
+                    <td><img src="${banner.image_url}" alt="${banner.title}" style="width: 150px; height: 80px; object-fit: cover; border-radius: 8px;"></td>
+                    <td>${banner.title || '-'}</td>
+                    <td>${banner.link_url || '-'}</td>
+                    <td>${banner.sort_order}</td>
+                    <td>
+                        <span class="status-badge status-${banner.status}">
+                            ${banner.status === 'active' ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editBanner('${banner.id}')">编辑</button>
+                            <button class="btn-action btn-delete" onclick="deleteBanner('${banner.id}')">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function openBannerModal(id = null) {
+        // 打开轮播图弹窗
+        async function openBannerModal(bannerId = null) {
             editingBanner = null;
-            if (id) {
-                const {data:b} = await DB.from('banners').select('*').eq('id',id).single();
-                if (b) {
-                    editingBanner = b;
+
+            if (bannerId) {
+                const { data: banner } = await supabase
+                    .from('banners')
+                    .select('*')
+                    .eq('id', bannerId)
+                    .single();
+
+                if (banner) {
+                    editingBanner = banner;
                     document.getElementById('bannerModalTitle').textContent = '编辑轮播图';
-                    document.getElementById('bannerId').value = b.id;
-                    document.getElementById('bannerTitle').value = b.title||'';
-                    document.getElementById('bannerImage').value = b.image_url;
-                    document.getElementById('bannerLink').value = b.link_url||'';
-                    document.getElementById('bannerSort').value = b.sort_order;
-                    document.getElementById('bannerStatus').value = b.status;
+                    document.getElementById('bannerId').value = banner.id;
+                    document.getElementById('bannerTitle').value = banner.title || '';
+                    document.getElementById('bannerImage').value = banner.image_url;
+                    document.getElementById('bannerLink').value = banner.link_url || '';
+                    document.getElementById('bannerSort').value = banner.sort_order;
+                    document.getElementById('bannerStatus').value = banner.status;
                 }
             } else {
                 document.getElementById('bannerModalTitle').textContent = '添加轮播图';
@@ -673,93 +984,153 @@
                 document.getElementById('bannerSort').value = '0';
                 document.getElementById('bannerStatus').value = 'active';
             }
+
             document.getElementById('bannerModal').classList.add('active');
         }
 
-        document.getElementById('addBannerBtn').addEventListener('click', () => openBannerModal());
-        document.getElementById('closeBannerModal').addEventListener('click', () => document.getElementById('bannerModal').classList.remove('active'));
-        document.getElementById('cancelBannerBtn').addEventListener('click', () => document.getElementById('bannerModal').classList.remove('active'));
-        document.getElementById('saveBannerBtn').addEventListener('click', async function() {
-            const id = document.getElementById('bannerId').value;
-            const data = {
+        // 关闭轮播图弹窗
+        function closeBannerModal() {
+            document.getElementById('bannerModal').classList.remove('active');
+            editingBanner = null;
+        }
+
+        // 编辑轮播图
+        async function editBanner(bannerId) {
+            await openBannerModal(bannerId);
+        }
+
+        // 保存轮播图
+        async function saveBanner() {
+            const bannerId = document.getElementById('bannerId').value;
+            const bannerData = {
                 title: document.getElementById('bannerTitle').value,
                 image_url: document.getElementById('bannerImage').value,
                 link_url: document.getElementById('bannerLink').value,
-                sort_order: parseInt(document.getElementById('bannerSort').value)||0,
+                sort_order: parseInt(document.getElementById('bannerSort').value) || 0,
                 status: document.getElementById('bannerStatus').value
             };
-            if (!data.image_url) return showToast('请填写图片URL','error');
+
+            if (!bannerData.image_url) {
+                showToast('请填写图片URL', 'error');
+                return;
+            }
+
             try {
-                if (id) {
-                    await DB.from('banners').update(data).eq('id',id);
-                    showToast('更新成功','success');
+                if (bannerId) {
+                    const { error } = await supabase
+                        .from('banners')
+                        .update(bannerData)
+                        .eq('id', bannerId);
+
+                    if (error) throw error;
+
+                    showToast('轮播图更新成功', 'success');
                 } else {
-                    await DB.from('banners').insert([data]);
-                    showToast('添加成功','success');
+                    const { error } = await supabase
+                        .from('banners')
+                        .insert([bannerData]);
+
+                    if (error) throw error;
+
+                    showToast('轮播图添加成功', 'success');
                 }
-                document.getElementById('bannerModal').classList.remove('active');
+
+                closeBannerModal();
                 loadBanners();
-            } catch(e) {
-                showToast('保存失败: '+e.message,'error');
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
             }
-        });
-
-        function attachBannerEvents() {
-            document.querySelectorAll('[data-action="editBanner"]').forEach(btn => {
-                btn.addEventListener('click', () => openBannerModal(btn.getAttribute('data-id')));
-            });
-            document.querySelectorAll('[data-action="deleteBanner"]').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    if (confirm('确定删除？')) {
-                        await DB.from('banners').delete().eq('id',this.getAttribute('data-id'));
-                        showToast('删除成功','success');
-                        loadBanners();
-                    }
-                });
-            });
         }
 
-        // 设置
-        function loadSettings() {
-            DB.from('settings').select('*').then(({data,error}) => {
-                if (error) return showToast('加载失败: '+error.message,'error');
-                data.forEach(s => {
-                    const map = {
-                        'site_name':'siteName','site_slogan':'siteSlogan','payment_qr_code':'paymentQrCode',
-                        'contact_telegram':'contactTelegram','contact_phone':'contactPhone',
-                        'contact_group':'contactGroup','contact_channel':'contactChannel'
-                    };
-                    if (map[s.key_name]) document.getElementById(map[s.key_name]).value = s.value||'';
-                });
-            });
-        }
+        // 删除轮播图
+        async function deleteBanner(bannerId) {
+            if (!confirm('确定要删除这个轮播图吗？')) {
+                return;
+            }
 
-        document.getElementById('saveSettingsBtn').addEventListener('click', async function() {
-            const settings = [
-                {key_name:'site_name',value:document.getElementById('siteName').value},
-                {key_name:'site_slogan',value:document.getElementById('siteSlogan').value},
-                {key_name:'payment_qr_code',value:document.getElementById('paymentQrCode').value},
-                {key_name:'contact_telegram',value:document.getElementById('contactTelegram').value},
-                {key_name:'contact_phone',value:document.getElementById('contactPhone').value},
-                {key_name:'contact_group',value:document.getElementById('contactGroup').value},
-                {key_name:'contact_channel',value:document.getElementById('contactChannel').value}
-            ];
             try {
-                for (const s of settings) {
-                    await DB.from('settings').upsert(s,{onConflict:'key_name'});
-                }
-                showToast('保存成功','success');
-            } catch(e) {
-                showToast('保存失败: '+e.message,'error');
-            }
-        });
+                const { error } = await supabase
+                    .from('banners')
+                    .delete()
+                    .eq('id', bannerId);
 
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) this.classList.remove('active');
+                if (error) throw error;
+
+                showToast('轮播图删除成功', 'success');
+                loadBanners();
+            } catch (error) {
+                showToast('删除失败：' + error.message, 'error');
+            }
+        }
+
+        // ==================== 系统设置 ====================
+
+        // 加载系统设置
+        async function loadSettings() {
+            const { data: settings, error } = await supabase
+                .from('settings')
+                .select('*');
+
+            if (error) {
+                showToast('加载设置失败：' + error.message, 'error');
+                return;
+            }
+
+            // 填充表单
+            settings.forEach(setting => {
+                if (setting.key_name === 'site_name') {
+                    document.getElementById('siteName').value = setting.value || '';
+                } else if (setting.key_name === 'site_slogan') {
+                    document.getElementById('siteSlogan').value = setting.value || '';
+                } else if (setting.key_name === 'payment_qr_code') {
+                    document.getElementById('paymentQrCode').value = setting.value || '';
+                } else if (setting.key_name === 'contact_telegram') {
+                    document.getElementById('contactTelegram').value = setting.value || '';
+                } else if (setting.key_name === 'contact_phone') {
+                    document.getElementById('contactPhone').value = setting.value || '';
+                } else if (setting.key_name === 'contact_group') {
+                    document.getElementById('contactGroup').value = setting.value || '';
+                } else if (setting.key_name === 'contact_channel') {
+                    document.getElementById('contactChannel').value = setting.value || '';
+                }
             });
-        });
-    })();
+        }
+
+        // 保存系统设置
+        async function saveSettings() {
+            const settingsData = [
+                { key_name: 'site_name', value: document.getElementById('siteName').value },
+                { key_name: 'site_slogan', value: document.getElementById('siteSlogan').value },
+                { key_name: 'payment_qr_code', value: document.getElementById('paymentQrCode').value },
+                { key_name: 'contact_telegram', value: document.getElementById('contactTelegram').value },
+                { key_name: 'contact_phone', value: document.getElementById('contactPhone').value },
+                { key_name: 'contact_group', value: document.getElementById('contactGroup').value },
+                { key_name: 'contact_channel', value: document.getElementById('contactChannel').value }
+            ];
+
+            try {
+                for (const setting of settingsData) {
+                    const { error } = await supabase
+                        .from('settings')
+                        .upsert(setting, { onConflict: 'key_name' });
+
+                    if (error) throw error;
+                }
+
+                showToast('设置保存成功', 'success');
+            } catch (error) {
+                showToast('保存失败：' + error.message, 'error');
+            }
+        }
+
+        // =======================================================
+        // 点击弹窗外部关闭
+        // =======================================================
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
     </script>
 </body>
 </html>
