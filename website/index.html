@@ -1691,6 +1691,11 @@
             // 从共享数据加载
             products = window.sharedProducts || [];
 
+            console.log('===== 数据加载调试 =====');
+            console.log('sharedProducts:', window.sharedProducts);
+            console.log('商品数量:', products.length);
+            console.log('商品明细:', products);
+
             // 为缺少 qrCode 的商品添加默认值
             products.forEach(product => {
                 if (!product.qrCode) {
@@ -1702,7 +1707,8 @@
                 }
             });
 
-            console.log('初始化商品数量:', products.length);
+            console.log('初始化后商品数量:', products.length);
+            console.log('========================');
         }
 
         // 生成商品卡片
@@ -1764,14 +1770,23 @@
             // 根据分类筛选商品
             if (category === 'all' || category === 'home') {
                 generateProducts(products);
-            } else if (category === 'more') {
-                // 点击"更多"时显示所有商品
-                generateProducts(products);
-                alert('更多分类即将上线，敬请期待！');
             } else {
-                // 其他分类暂时显示所有商品（可后续添加具体分类数据）
-                generateProducts(products);
-                alert('该分类即将上线，敬请期待！');
+                // 真正按分类筛选商品
+                const filteredProducts = products.filter(p => p.category === category);
+
+                if (filteredProducts.length > 0) {
+                    generateProducts(filteredProducts);
+                } else {
+                    // 如果该分类没有商品，显示空状态
+                    const productsContainer = document.getElementById('products');
+                    productsContainer.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: white;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📦</div>
+                            <h3 style="font-size: 24px; margin-bottom: 10px;">暂无${getCategoryName(category)}商品</h3>
+                            <p style="font-size: 16px; opacity: 0.8;">该分类正在更新中，敬请期待</p>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -2062,8 +2077,15 @@
                 if (filtered.length > 0) {
                     generateProducts(filtered);
                 } else {
-                    alert('该分类即将上线，敬请期待！');
-                    generateProducts(products);
+                    // 显示空状态
+                    const productsContainer = document.getElementById('products');
+                    productsContainer.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: white;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📦</div>
+                            <h3 style="font-size: 24px; margin-bottom: 10px;">暂无该分类商品</h3>
+                            <p style="font-size: 16px; opacity: 0.8;">该分类正在更新中，敬请期待</p>
+                        </div>
+                    `;
                 }
             }
         }
