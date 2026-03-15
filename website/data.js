@@ -23,7 +23,8 @@ let sharedProducts = [
         "value": "￥150元"
       }
     ],
-    "id": "1773554157033"
+    "id": "1773554157033",
+    "qrCode": "https://i.ibb.co/4WQxrM2Q/image.png"
   },
   {
     "name": "Telegram飞机账号",
@@ -38,7 +39,8 @@ let sharedProducts = [
         "value": "￥135元"
       }
     ],
-    "id": "1773558032040"
+    "id": "1773558032040",
+    "qrCode": "https://i.ibb.co/4WQxrM2Q/image.png"
   }
 ];
 

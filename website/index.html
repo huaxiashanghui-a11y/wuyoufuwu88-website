@@ -1196,6 +1196,19 @@
 
     <!-- 加载共享数据文件 -->
     <script src="data.js"></script>
+
+    <!-- 确保数据加载完成后再初始化 -->
+    <script>
+        // 等待data.js加载完成
+        window.addEventListener('load', function() {
+            // 如果sharedProducts已定义，则使用；否则使用空数组
+            window.products = window.sharedProducts || [];
+            console.log('已加载商品数量:', window.products.length);
+
+            // 通知页面数据已加载
+            window.dataLoaded = true;
+        });
+    </script>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -1667,8 +1680,30 @@
         // 商品数据
         // ==================== 商品数据 ====================
         // 从共享数据文件加载（管理后台导出数据后更新）
-        let products = sharedProducts || [];
+        let products = [];
         let currentProduct = null;
+
+        // 默认收款二维码
+        const paymentQrCode = 'https://i.ibb.co/4WQxrM2Q/image.png';
+
+        // 初始化商品数据
+        function initializeProducts() {
+            // 从共享数据加载
+            products = window.sharedProducts || [];
+
+            // 为缺少 qrCode 的商品添加默认值
+            products.forEach(product => {
+                if (!product.qrCode) {
+                    product.qrCode = paymentQrCode;
+                }
+                // 确保 product 有 id
+                if (!product.id) {
+                    product.id = Date.now() + Math.random();
+                }
+            });
+
+            console.log('初始化商品数量:', products.length);
+        }
 
         // 生成商品卡片
         function generateProducts(productsToDisplay = products) {
@@ -2034,8 +2069,19 @@
         }
 
         // 初始化
-        generateProducts();
-        initCarousel();
+        // 等待数据加载完成
+        if (window.dataLoaded) {
+            initializeProducts();
+            generateProducts();
+            initCarousel();
+        } else {
+            // 如果data.js还没加载完成，监听加载事件
+            window.addEventListener('load', function() {
+                initializeProducts();
+                generateProducts();
+                initCarousel();
+            });
+        }
     </script>
 </body>
 </html>

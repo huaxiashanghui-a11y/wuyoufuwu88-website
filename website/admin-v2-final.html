@@ -1471,6 +1471,12 @@
     function exportFrontendData() {
         const dateStr = new Date().toISOString();
 
+        // 为商品添加默认的 qrCode（如果商品没有）
+        const productsWithQrCode = products.map(p => ({
+            ...p,
+            qrCode: p.qrCode || 'https://i.ibb.co/4WQxrM2Q/image.png'
+        }));
+
         const frontendCode = `// 北苍星际速充 - 共享数据文件
 // 此文件由管理后台导出数据时自动生成
 // 导出时间：${dateStr}
@@ -1479,7 +1485,7 @@
 const siteSettings = ${JSON.stringify(settings, null, 2)};
 
 // 商品数据
-let sharedProducts = ${JSON.stringify(products, null, 2)};
+let sharedProducts = ${JSON.stringify(productsWithQrCode, null, 2)};
 
 // 分类数据
 let sharedCategories = ${JSON.stringify(categories, null, 2)};
